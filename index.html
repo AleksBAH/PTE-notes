@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTE Study Notes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0f0; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+    padding: 24px 32px;
+    border-bottom: 2px solid #4a3f8a;
+    display: flex; align-items: center; gap: 16px;
+  }
+  header h1 { font-size: 1.8rem; color: #c9b8ff; letter-spacing: 1px; }
+  header span { font-size: 2rem; }
+
+  .tabs {
+    display: flex; gap: 4px; padding: 16px 24px 0;
+    background: #0f0f1a; overflow-x: auto; flex-wrap: nowrap;
+    border-bottom: 2px solid #2a2a4a;
+  }
+  .tab-btn {
+    padding: 10px 18px; border: none; border-radius: 10px 10px 0 0;
+    cursor: pointer; font-size: 0.82rem; font-weight: 600;
+    white-space: nowrap; transition: all 0.2s;
+    background: #1e1e3a; color: #888;
+  }
+  .tab-btn.active { color: #fff; }
+  .tab-btn[data-section="speaking"].active { background: #3b1f6e; color: #c9b8ff; }
+  .tab-btn[data-section="writing"].active  { background: #1a3d2e; color: #7fffc4; }
+  .tab-btn[data-section="reading"].active  { background: #1a2e4a; color: #7ec8ff; }
+  .tab-btn[data-section="listening"].active{ background: #3d2a1a; color: #ffcc80; }
+
+  .content { padding: 24px; max-width: 900px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card {
+    background: #1a1a2e; border-radius: 14px; padding: 20px 24px;
+    margin-bottom: 20px; border-left: 4px solid #4a3f8a;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .card.speaking { border-left-color: #7c5cbf; }
+  .card.writing  { border-left-color: #2ecc71; }
+  .card.reading  { border-left-color: #3498db; }
+  .card.listening{ border-left-color: #e67e22; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px; cursor: pointer;
+  }
+  .card-header h2 { font-size: 1.1rem; color: #d0c0ff; flex: 1; }
+  .card.writing .card-header h2  { color: #7fffc4; }
+  .card.reading .card-header h2  { color: #7ec8ff; }
+  .card.listening .card-header h2{ color: #ffcc80; }
+
+  .badge {
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 20px;
+    font-weight: 700; background: #2d1b69; color: #c9b8ff;
+  }
+  .card.writing .badge  { background: #1a3d2e; color: #7fffc4; }
+  .card.reading .badge  { background: #1a2e4a; color: #7ec8ff; }
+  .card.listening .badge{ background: #3d2a1a; color: #ffcc80; }
+
+  .toggle-icon { font-size: 1rem; color: #666; transition: transform 0.3s; }
+  .card-body { overflow: hidden; transition: max-height 0.4s ease; }
+  .card-body.collapsed { max-height: 0; }
+  .card-body.expanded  { max-height: 9999px; }
+
+  .rule-block { margin-bottom: 14px; }
+  .rule-block h3 { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+  ul { padding-left: 18px; }
+  li { margin-bottom: 6px; font-size: 0.9rem; line-height: 1.5; color: #ccc; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; margin-right: 4px; }
+  .tag.green  { background: #1a3d2e; color: #7fffc4; }
+  .tag.red    { background: #3d1a1a; color: #ff8080; }
+  .tag.yellow { background: #3d3000; color: #ffd700; }
+  .tag.blue   { background: #1a2e4a; color: #7ec8ff; }
+
+  .template-box {
+    background: #0d0d1f; border: 1px solid #333; border-radius: 10px;
+    padding: 16px; font-size: 0.85rem; line-height: 1.8;
+    color: #b0b0d0; font-family: 'Courier New', monospace;
+    white-space: pre-wrap; margin-top: 10px;
+  }
+  .highlight { color: #ffd700; font-weight: 600; }
+  .bracket   { color: #7ec8ff; }
+
+  .tip-box {
+    background: #1e1a00; border: 1px solid #5a4a00; border-radius: 8px;
+    padding: 12px 16px; margin-top: 10px; font-size: 0.85rem; color: #ffd700;
+  }
+  .tip-box::before { content: "💡 "; }
+
+  .warn-box {
+    background: #1f0a0a; border: 1px solid #5a1a1a; border-radius: 8px;
+    padding: 12px 16px; margin-top: 10px; font-size: 0.85rem; color: #ff8080;
+  }
+  .warn-box::before { content: "⚠️ "; }
+
+  .strategy-box {
+    background: #0a1f1a; border: 1px solid #1a5a3a; border-radius: 8px;
+    padding: 12px 16px; margin-top: 10px; font-size: 0.85rem; color: #7fffc4;
+  }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+  @media(max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .mini-card {
+    background: #0d0d1f; border-radius: 10px; padding: 14px;
+    border: 1px solid #2a2a4a; font-size: 0.85rem;
+  }
+  .mini-card h4 { color: #c9b8ff; margin-bottom: 8px; font-size: 0.9rem; }
+  .card.writing .mini-card h4  { color: #7fffc4; }
+  .card.reading .mini-card h4  { color: #7ec8ff; }
+  .card.listening .mini-card h4{ color: #ffcc80; }
+
+  .overall-box {
+    background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+    border-radius: 14px; padding: 20px 24px; margin-bottom: 20px;
+    border: 1px solid #4a3f8a;
+  }
+  .overall-box h2 { color: #c9b8ff; margin-bottom: 12px; font-size: 1rem; }
+  .overall-box li { color: #ddd; }
+
+  .connector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+  @media(max-width: 500px) { .connector-grid { grid-template-columns: 1fr; } }
+  .conn-item { background: #0d0d1f; border-radius: 8px; padding: 10px; border: 1px solid #2a2a4a; }
+  .conn-item h4 { font-size: 0.78rem; color: #888; margin-bottom: 6px; text-transform: uppercase; }
+  .conn-item p  { font-size: 0.82rem; color: #b0b0d0; line-height: 1.6; }
+  .conn-item .best { color: #ffd700; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <span>📚</span>
+  <h1>PTE Study Notes</h1>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-section="speaking" onclick="switchSection('speaking', this)">🎤 Speaking</button>
+  <button class="tab-btn" data-section="writing"  onclick="switchSection('writing', this)">✍️ Writing</button>
+  <button class="tab-btn" data-section="reading"  onclick="switchSection('reading', this)">📖 Reading</button>
+  <button class="tab-btn" data-section="listening" onclick="switchSection('listening', this)">🎧 Listening</button>
+</div>
+
+<div class="content">
+
+  <!-- ===== SPEAKING ===== -->
+  <div class="section active" id="speaking">
+
+    <div class="overall-box">
+      <h2>🧠 Общая стратегия</h2>
+      <ul>
+        <li>Всегда говори → <strong>тишина = потеря баллов</strong></li>
+        <li><strong>Fluency > Accuracy</strong></li>
+        <li>Используй шаблоны → это ускоряет речь</li>
+        <li>Не паникуй при ошибках — просто продолжай</li>
+      </ul>
+    </div>
+
+    <!-- 1. Read Aloud -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>📖</span>
+        <h2>1. Read Aloud</h2>
+        <span class="badge">6–7 вопросов · 6 баллов</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="rule-block">
+          <h3>🔑 Основные правила</h3>
+          <ul>
+            <li>Читай плавно и <strong>держи один ритм</strong></li>
+            <li>Веди глазами (или курсором) по тексту</li>
+            <li>Смотри <strong>на слово вперед</strong></li>
+            <li>Четко произноси окончания: <strong>-s, -ed</strong></li>
+          </ul>
+        </div>
+        <div class="grid2">
+          <div class="mini-card">
+            <h4><span class="tag red">❌</span> Не делай</h4>
+            <ul>
+              <li>Не останавливайся при ошибке</li>
+              <li>Не паникуй</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="tag green">✅</span> Делай</h4>
+            <ul>
+              <li>Просто продолжай читать</li>
+              <li>Сложное слово → замени на похожее или скажи <em>"something"</em></li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-box">Сделай вдох перед началом. Дыши только на запятых (редко) и на точках. Немного растягивай окончания слов.</div>
+      </div>
+    </div>
+
+    <!-- 2. Repeat Sentence -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🔁</span>
+        <h2>2. Repeat Sentence</h2>
+        <span class="badge">10–12 вопросов · 3 балла</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="strategy-box">👉 <strong>Fluency важнее идеальной точности</strong></div>
+        <div class="rule-block" style="margin-top:12px">
+          <h3>✅ Что делать</h3>
+          <ul>
+            <li>Повторяй <strong>сразу после прослушивания</strong></li>
+            <li>Говори <strong>без остановки</strong>, даже если не уверен</li>
+            <li>Слова должны идти <strong>в правильном порядке</strong></li>
+          </ul>
+        </div>
+        <div class="rule-block">
+          <h3>⚠️ Если не знаешь</h3>
+          <ul>
+            <li>Говори любые слова, но <strong>сохраняй поток речи</strong></li>
+            <li>Пропустил начало → продолжай с середины</li>
+          </ul>
+        </div>
+        <div class="tip-box">Минимум: <strong>50% предложения (~5 слов)</strong></div>
+      </div>
+    </div>
+
+    <!-- 3. Describe Image -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🖼️</span>
+        <h2>3. Describe Image</h2>
+        <span class="badge">Template</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="template-box"><span class="highlight">Universal Template:</span>
+
+The image provided on the screen is a <span class="bracket">[graph type]</span>, and it presents information regarding <span class="bracket">[title]</span>.
+
+The data is measured in terms of <span class="bracket">[units]</span>.
+
+There are also other factors in this graph, like <span class="bracket">[years / headings]</span>.
+
+To begin with, the first visible element is <span class="bracket">[data]</span>.
+
+The final data point is <span class="bracket">[data]</span>.
+
+To sum up, this image shows the relationship between various elements of <span class="bracket">[title]</span>.</div>
+
+        <div class="grid2" style="margin-top:14px">
+          <div class="mini-card">
+            <h4>📊 График</h4>
+            <ol style="padding-left:16px; font-size:0.83rem; color:#ccc; line-height:1.8">
+              <li>Тип (bar / line / diagram)</li>
+              <li>Заголовок</li>
+              <li>Единицы измерения</li>
+              <li>Первый показатель</li>
+              <li>Средний / тенденция</li>
+              <li>Последний показатель</li>
+              <li>Conclusion</li>
+            </ol>
+          </div>
+          <div class="mini-card">
+            <h4>🖼 Картинка</h4>
+            <ol style="padding-left:16px; font-size:0.83rem; color:#ccc; line-height:1.8">
+              <li>Тип: <em>picture</em></li>
+              <li>Общее описание</li>
+              <li>Цвета / материалы</li>
+              <li>Передний план</li>
+              <li>Центральный объект</li>
+              <li>Детали (фон)</li>
+              <li>Conclusion</li>
+            </ol>
+          </div>
+        </div>
+        <div class="tip-box">Нет названия → придумай. Не знаешь тип → скажи <strong>diagram</strong>. Мало инфо → говори про цвета, расположение, форму.</div>
+        <div class="warn-box"><strong>Process</strong> (стрелки/этапы) → добавь: <em>"The data include number of steps"</em><br><strong>Map</strong> → <em>"The data is categorized based on colors"</em></div>
+      </div>
+    </div>
+
+    <!-- 4. Re-tell Lecture -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🎓</span>
+        <h2>4. Re-tell Lecture</h2>
+        <span class="badge">Template</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="strategy-box">Логика ≠ важно  |  <strong>Fluency = важно</strong></div>
+        <div class="rule-block" style="margin-top:12px">
+          <h3>✅ Как делать заметки</h3>
+          <ul>
+            <li>Не слова → <strong>короткие фразы</strong></li>
+            <li>Повторяй вслух, пока пишешь</li>
+          </ul>
+        </div>
+        <div class="template-box"><span class="highlight">Template:</span>
+
+The speaker was giving a lecture about <span class="bracket">[topic]</span>.
+
+The speaker discussed the main aspects of <span class="bracket">[topic]</span>.
+
+At the beginning, the speaker mentioned <span class="bracket">[point 1]</span>.
+
+Secondly, it was mentioned that <span class="bracket">[point 2]</span>.
+
+Thirdly, it was also mentioned that <span class="bracket">[point 3]</span>.
+
+Towards the end, the speaker highlighted that <span class="bracket">[point 4]</span>.</div>
+        <div class="warn-box">Не переживай, если что-то пропустил. Говори уверенно и без пауз.</div>
+      </div>
+    </div>
+
+    <!-- 5. Answer Short Question -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>❓</span>
+        <h2>5. Answer Short Question</h2>
+        <span class="badge">Быстро</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="grid2">
+          <div class="mini-card">
+            <h4><span class="tag red">❌</span> Никогда</h4>
+            <ul><li>Не молчи</li></ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="tag green">✅</span> Стратегия</h4>
+            <ul>
+              <li>Начинай через ~2 секунды</li>
+              <li>Есть выбор → скажи <strong>оба варианта</strong></li>
+              <li>Не знаешь → повтори вопрос, говори по теме</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Summarise Group Discussion -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>👥</span>
+        <h2>6. Summarise Group Discussion</h2>
+        <span class="badge">Template</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="rule-block">
+          <h3>✅ Подготовка — дели заметки</h3>
+          <div class="grid2">
+            <div class="mini-card"><h4>Блокнот</h4>
+              <p style="color:#ccc; font-size:0.85rem">Speaker 1 · Speaker 2 · Speaker 3 · Topic</p>
+            </div>
+          </div>
+        </div>
+        <div class="template-box"><span class="highlight">Template:</span>
+
+The topic of this discussion was about <span class="bracket">[topic]</span>.
+
+The 1st speaker mentioned that <span class="bracket">[idea]</span>, and also said that <span class="bracket">[idea]</span>.
+
+Moreover, the 2nd speaker added that <span class="bracket">[idea]</span>.
+
+In addition, the 3rd speaker talked about <span class="bracket">[idea]</span>.
+
+In conclusion, the discussion focused on <span class="bracket">[topic]</span>.</div>
+      </div>
+    </div>
+
+    <!-- 7. Respond to Situation -->
+    <div class="card speaking">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>💬</span>
+        <h2>7. Respond to Situation</h2>
+        <span class="badge">Алгоритм</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <ol style="padding-left:18px; line-height:2; font-size:0.9rem; color:#ccc;">
+          <li>Не жди — <strong>читай сам</strong></li>
+          <li>Определи <strong>кто спрашивает</strong> и <strong>кого</strong> → запиши</li>
+          <li>Определи <strong>тип вопроса</strong>: совет / вопрос / мнение</li>
+          <li>Пойми <strong>свою роль</strong>: student, friend и т.д.</li>
+          <li>Начни с <strong>описания ситуации</strong></li>
+          <li>Давай <strong>действенные советы</strong></li>
+          <li><strong>Обязательно</strong> заверши благодарностью</li>
+        </ol>
+      </div>
+    </div>
+
+  </div><!-- /speaking -->
+
+  <!-- ===== WRITING ===== -->
+  <div class="section" id="writing">
+
+    <!-- Summarise Written Text -->
+    <div class="card writing">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>📝</span>
+        <h2>1. Summarise Written Text</h2>
+        <span class="badge">5–75 слов · 1 предложение</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="grid2">
+          <div class="mini-card">
+            <h4><span class="tag red">❌</span> Пропускай</h4>
+            <ul>
+              <li>Примеры (for example, such as)</li>
+              <li>Информацию в кавычках</li>
+              <li>Описание процесса → 1–2 примера</li>
+              <li>В списках → 1–2 особенности</li>
+              <li>Наречия на <strong>-ly</strong></li>
+              <li>Риторические вопросы</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="tag green">✅</span> Важно</h4>
+            <ul>
+              <li>Начало <strong>каждого параграфа</strong></li>
+              <li>Последние <strong>2–3 предложения</strong></li>
+              <li>Минимум <strong>3–5 идей</strong> для баллов за чтение</li>
+            </ul>
+          </div>
+        </div>
+        <div class="rule-block" style="margin-top:14px">
+          <h3>⚡ Тактика</h3>
+          <ul>
+            <li><strong>Тактика 1:</strong> Перечисли идеи → потом перефразируй</li>
+            <li><strong>Тактика 2:</strong> Сразу перефразируй и пиши (50–60% перефраз)</li>
+            <li>Придерживайся <strong>55–65 слов</strong></li>
+            <li>Не пиши сокращения с точкой</li>
+            <li>I/we/us → замени на <strong>he / she / they / it</strong></li>
+            <li>Имена → второй раз замени на <strong>he / she</strong></li>
+          </ul>
+        </div>
+        <div class="connector-grid">
+          <div class="conn-item">
+            <h4>Схожая идея</h4>
+            <p>and, also, which, because<br><span class="best">moreover, furthermore ⭐</span></p>
+          </div>
+          <div class="conn-item">
+            <h4>Контраст</h4>
+            <p>but, yet<br><span class="best">however ⭐</span></p>
+          </div>
+          <div class="conn-item">
+            <h4>Заключение</h4>
+            <p><span class="best">hence, thus, therefore ⭐</span></p>
+          </div>
+        </div>
+        <div class="tip-box">Много слов → одна запятая ДО. Подчёркнутые слова → запятые ДО и ПОСЛЕ.</div>
+      </div>
+    </div>
+
+    <!-- Write Essay -->
+    <div class="card writing">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>✍️</span>
+        <h2>2. Write Essay</h2>
+        <span class="badge">Полный шаблон</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="grid2">
+          <div class="mini-card"><h4>📌 Intro (2–3 предл.)</h4><ul><li>Debate about TOPIC</li><li>Some agree, others disagree</li><li>You will present both sides</li></ul></div>
+          <div class="mini-card"><h4>📌 Body 1 (+) 3–4 предл.</h4><ul><li>Firstly / On the one hand</li><li>Объясни почему</li><li>Example + expand</li><li>Concluding sentence</li></ul></div>
+          <div class="mini-card"><h4>📌 Body 2 (-) 3–4 предл.</h4><ul><li>However / In contrast</li><li>Объясни почему</li><li>Example + expand</li><li>Concluding sentence</li></ul></div>
+          <div class="mini-card"><h4>📌 Conclusion</h4><ul><li>From what was discussed...</li><li>We have to carefully consider both sides.</li></ul></div>
+        </div>
+        <div class="template-box" style="margin-top:14px"><span class="highlight">INTRO:</span>
+The topic of <span class="bracket">[Paraphrase TOPIC, 4-6 words]</span> is becoming more and more popular in the current society. Although many individuals are discussing the positive impact of <span class="bracket">[TOPIC]</span>, others mention the negative effects of <span class="bracket">[TOPIC]</span>. In this essay, I will weigh both sides of the argument and present a logical opinion.
+
+<span class="highlight">BODY 1 (+):</span>
+Firstly, there are multiple important factors that make <span class="bracket">[TOPIC]</span> seen as a positive development; one dominant argument in favour is that <span class="bracket">[IDEA, 6-10 words]</span>. For example, doctors at Harvard University recently stated that _________________. Consequently, this demonstrates that the beneficial impact on <span class="bracket">[who it affects]</span>.
+
+<span class="highlight">BODY 2 (-):</span>
+Nevertheless, those who argue against <span class="bracket">[TOPIC]</span> are underlining the harmful impact it's having on <span class="bracket">[who it affects]</span>. One notable concern is that <span class="bracket">[IDEA, 6-10 words]</span>. For instance, an article published in New Zealand Times mentioned that _________. Thus, this can cause problems for <span class="bracket">[who it affects]</span>, especially for <span class="bracket">[their health / income / well-being]</span>.
+
+<span class="highlight">CONCLUSION:</span>
+To sum up, both sides of the argument have to be carefully considered. However, I believe that the positive influence of <span class="bracket">[TOPIC]</span> is much more beneficial, compared to the harmful effects of <span class="bracket">[TOPIC]</span>. Therefore, <span class="bracket">[REPHRASE YOUR OPINION FROM BP1]</span>.</div>
+        <div class="tip-box">Example formula: <em>studies at Harvard / Oxford / MIT / New York Times show that... 20% of X... helped reduce Y...</em></div>
+      </div>
+    </div>
+
+    <div class="overall-box">
+      <h2>🧠 Общая стратегия Writing</h2>
+      <ul>
+        <li>Структура важнее идеального содержания</li>
+        <li>Всегда используй <strong>соединители</strong></li>
+        <li>Не пиши сокращения</li>
+        <li>Убирай примеры, наречия, кавычки при суммаризации</li>
+        <li>Всегда заканчивай <strong>заключением</strong></li>
+      </ul>
+    </div>
+
+  </div><!-- /writing -->
+
+  <!-- ===== READING ===== -->
+  <div class="section" id="reading">
+
+    <div class="card reading">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>📋</span>
+        <h2>1. Fill in the Blanks (Dropdown)</h2>
+        <span class="badge">Грамматика + Vocab</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="grid2">
+          <div class="mini-card"><h4>Распределение</h4>
+            <ul>
+              <li>Грамматика — <strong>30%</strong></li>
+              <li>Vocab + контекст — <strong>40%</strong></li>
+              <li>Practice — <strong>30%</strong></li>
+            </ul>
+          </div>
+          <div class="mini-card"><h4>Советы</h4>
+            <ul>
+              <li>Читай вслух слова вокруг пустого места</li>
+              <li>Не может быть 2 слова одного типа подряд (без запятой)</li>
+              <li><strong>Дочитывай до конца предложения!</strong></li>
+              <li>Пойми время по контексту</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reading">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🔀</span>
+        <h2>2. Fill in the Blanks (Drag & Drop)</h2>
+        <span class="badge">Форма слова</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <ul>
+          <li>Чётко определись с <strong>формой слова</strong></li>
+          <li><strong>which / that</strong> → запятая до → слово на <strong>w</strong> (whichever, whoever)</li>
+          <li>Нет запятой → слово на <strong>t</strong></li>
+          <li><strong>Collocation words</strong> → слова, которые часто идут вместе</li>
+          <li>Выбирай более <strong>академические слова</strong></li>
+          <li>Читай вслух варианты</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card reading">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🔢</span>
+        <h2>3. Reorder Paragraphs</h2>
+        <span class="badge">2.5–3 минуты</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="grid2">
+          <div class="mini-card">
+            <h4>Первое предложение</h4>
+            <ul>
+              <li>Независимое, имеет смысл само по себе</li>
+              <li>Говорит о чём-то <strong>впервые</strong></li>
+              <li>Содержит <strong>имена и названия</strong></li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Последнее предложение</h4>
+            <ul>
+              <li><em>finally, overall, as a result, ending</em></li>
+            </ul>
+          </div>
+        </div>
+        <div class="rule-block" style="margin-top:12px">
+          <h3>🔑 Метод ключевых слов</h3>
+          <ul>
+            <li><strong>A / AN / NAME</strong> → упоминается впервые</li>
+            <li><strong>The / That / This / Those</strong> → упоминается снова</li>
+            <li><strong>But / Yet / However / In contrast</strong> → до: противоположный смысл</li>
+            <li><strong>Furthermore / Moreover / Also</strong> → до: схожий смысл</li>
+            <li>Вопрос → следующее предложение = ответ</li>
+          </ul>
+        </div>
+        <div class="tip-box">Порядок маркеров: <strong>So → But → Now</strong></div>
+      </div>
+    </div>
+
+    <div class="card reading">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>☑️</span>
+        <h2>4. Multiple Choice</h2>
+        <span class="badge">1 минута</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <ol style="padding-left:18px; line-height:2; font-size:0.9rem; color:#ccc;">
+          <li>Читаешь вопрос</li>
+          <li>Читаешь ответы</li>
+          <li>Читаешь текст <strong>снизу вверх</strong> (с последнего абзаца)</li>
+          <li>⚠️ <strong>В последнем абзаце есть минимум один ответ!</strong></li>
+        </ol>
+        <div class="warn-box">Уделяй внимание <strong>заключительным предложениям</strong> каждого параграфа. Если не уверен → давай только <strong>один ответ</strong>.</div>
+      </div>
+    </div>
+
+  </div><!-- /reading -->
+
+  <!-- ===== LISTENING ===== -->
+  <div class="section" id="listening">
+
+    <div class="card listening">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>📋</span>
+        <h2>1. Summarize Spoken Text</h2>
+        <span class="badge">Template</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="tip-box">Делай конспект группами по <strong>4–5 слов</strong>, не отдельными словами. Смысл не важен.</div>
+        <div class="template-box" style="margin-top:10px"><span class="highlight">Template:</span>
+
+The topic of this lecture was about ___________.
+It was demonstrated that ___________.
+Moreover, the speaker(s) also discussed ___________.
+Thus, the speaker concluded by saying that ___________.</div>
+      </div>
+    </div>
+
+    <div class="card listening">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>☑️</span>
+        <h2>2. Multiple Choice — Multiple Answer</h2>
+        <span class="badge">Стратегия</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <ul>
+          <li>Быстро читаем вопрос</li>
+          <li>Пока идёт текст → читай ответы</li>
+          <li>Если уверен → выбирай только <strong>один ответ</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card listening">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>✏️</span>
+        <h2>3. Fill in the Blanks</h2>
+        <span class="badge">Внимание</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="grid2">
+          <div class="mini-card">
+            <h4>Правила</h4>
+            <ul>
+              <li>Веди пальцем за спикером</li>
+              <li>Записывай ответ <strong>не в бланк</strong></li>
+              <li>Только <strong>одно слово</strong> в боксе</li>
+              <li>Нет пробелов</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Детали</h4>
+            <ul>
+              <li>Цифры до 10 → <strong>прописью</strong></li>
+              <li>После точки → <strong>заглавная</strong></li>
+              <li>University, Doctor → с заглавной</li>
+              <li>Пропустил → <strong>не оставляй пустым!</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card listening">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🔍</span>
+        <h2>4. Highlight Summary</h2>
+        <span class="badge">Последняя четверть</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <ul>
+          <li>Слушай и лови смысл</li>
+          <li>На <strong>последних 25–30%</strong> бегунка → слушай очень внимательно, там будет ответ</li>
+          <li>Сравнивай ответ только с <strong>последним предложением</strong> каждого варианта</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card listening">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>❌</span>
+        <h2>5. Highlight Incorrect Words</h2>
+        <span class="badge">Каждое слово</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <div class="warn-box">Будь внимателен — лови <strong>каждое слово</strong>!</div>
+      </div>
+    </div>
+
+    <div class="card listening">
+      <div class="card-header" onclick="toggleCard(this)">
+        <span>🎙️</span>
+        <h2>6. Write from Dictation</h2>
+        <span class="badge">Пословно</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-body expanded">
+        <ul>
+          <li>Оценивается <strong>пословно</strong> → не пропускай слова</li>
+          <li>Старайся поймать <strong>первые 5 слов!</strong></li>
+          <li>Всегда проверяй и добавь <strong>a / the</strong></li>
+          <li>Пиши сокращённые слова: <em>I've, it's</em> — <strong>не расписывай</strong></li>
+          <li>Напиши хотя бы что-то → сохраняй очередь слов</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /listening -->
+
+</div><!-- /content -->
+
+<script>
+  function switchSection(name, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleCard(header) {
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.toggle-icon');
+    if (body.classList.contains('expanded')) {
+      body.classList.replace('expanded', 'collapsed');
+      icon.style.transform = 'rotate(-90deg)';
+    } else {
+      body.classList.replace('collapsed', 'expanded');
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+</script>
+</body>
+</html>
